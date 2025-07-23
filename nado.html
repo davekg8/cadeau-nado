@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joyeux Anniversaire Nadège !</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/616/616490.png" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f97316;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ea580c;
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 50%;
+            opacity: 0;
+            transform: translateY(0) rotateZ(0);
+            animation: confetti-fall 3s ease-out forwards;
+            z-index: 9999;
+        }
+        /* Animation pour le modal */
+        .modal-fade {
+            animation: modalFadeIn 0.4s;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95);}
+            to { opacity: 1; transform: scale(1);}
+        }
+        /* Animation pour le feedback */
+        .fade-in-out {
+            animation: fadeInOut 1.2s;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0;}
+            10% { opacity: 1;}
+            90% { opacity: 1;}
+            100% { opacity: 0;}
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100">
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-gray-800/90 p-4 flex flex-col md:flex-row items-center justify-between shadow-lg rounded-b-lg backdrop-blur-md">
+        <div class="flex items-center space-x-2 mb-4 md:mb-0">
+            <span class="text-orange-500 text-3xl font-extrabold tracking-wide drop-shadow">JOYEUX</span>
+            <span class="text-white text-3xl font-extrabold tracking-wide drop-shadow">ANNIVERSAIRE</span>
+            <i class="fas fa-birthday-cake text-orange-500 text-2xl ml-1 animate-bounce"></i>
+        </div>
+        <ul class="flex flex-wrap justify-center space-x-2 md:space-x-6 text-lg mb-4 md:mb-0">
+            <li tabindex="0" aria-label="Voir les messages" class="flex items-center space-x-1 hover:bg-orange-500/20 hover:text-orange-400 transition-all duration-200 cursor-pointer p-2 rounded-md focus:ring-2 focus:ring-orange-500 outline-none">
+                <i class="fas fa-envelope-open-text text-orange-500"></i>
+                <span>MESSAGES</span>
+            </li>
+            <li tabindex="0" aria-label="Voir les photos" class="flex items-center space-x-1 hover:bg-orange-500/20 hover:text-orange-400 transition-all duration-200 cursor-pointer p-2 rounded-md focus:ring-2 focus:ring-orange-500 outline-none">
+                <i class="fas fa-images text-orange-500"></i>
+                <span>PHOTOS</span>
+            </li>
+            <li tabindex="0" aria-label="Voir les vidéos" class="flex items-center space-x-1 hover:bg-orange-500/20 hover:text-orange-400 transition-all duration-200 cursor-pointer p-2 rounded-md focus:ring-2 focus:ring-orange-500 outline-none">
+                <i class="fas fa-video text-orange-500"></i>
+                <span>VIDÉOS</span>
+            </li>
+            <li tabindex="0" aria-label="Voir les souvenirs" class="flex items-center space-x-1 hover:bg-orange-500/20 hover:text-orange-400 transition-all duration-200 cursor-pointer p-2 rounded-md focus:ring-2 focus:ring-orange-500 outline-none">
+                <i class="fas fa-star text-orange-500"></i>
+                <span>SOUVENIRS</span>
+            </li>
+            <li tabindex="0" aria-label="Contact" class="flex items-center space-x-1 hover:bg-orange-500/20 hover:text-orange-400 transition-all duration-200 cursor-pointer p-2 rounded-md focus:ring-2 focus:ring-orange-500 outline-none">
+                <i class="fas fa-heart text-orange-500"></i>
+                <span>CONTACT</span>
+            </li>
+        </ul>
+        <div class="flex items-center space-x-4">
+            <div class="relative">
+                <input type="text" placeholder="Chercher un souhait..." class="bg-gray-700 rounded-full py-2 px-4 pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 w-44 md:w-56 transition-all duration-200 shadow-inner" aria-label="Chercher un souhait">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <button id="celebrateButton" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-full transition-all duration-200 shadow-md transform hover:scale-105 focus:ring-2 focus:ring-orange-400 outline-none">CÉLÉBRER</button>
+        </div>
+    </nav>
+
+    <!-- Feedback sur le clic célébrer -->
+    <div id="celebrateFeedback" class="fixed top-20 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-6 py-2 rounded-full font-bold text-lg shadow-lg z-[10001] hidden"></div>
+
+    <!-- Main Content Area -->
+    <main class="p-2 md:p-8">
+        <section class="bg-black/80 w-full h-64 md:h-96 flex items-center justify-center relative rounded-lg overflow-hidden mb-8 shadow-xl border-2 border-orange-500/10">
+            <div class="absolute inset-0 bg-gradient-to-br from-gray-800/80 to-gray-900/90 flex items-center justify-center">
+                <i class="fas fa-play-circle text-orange-400 text-6xl md:text-8xl opacity-80 animate-pulse"></i>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-10 md:h-12 bg-gray-900 bg-opacity-75 flex items-center justify-between px-4 text-gray-300 text-xs md:text-sm">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-play cursor-pointer hover:text-white"></i>
+                    <span>0:00</span>
+                    <div class="w-24 md:w-48 h-1 bg-gray-700 rounded-full">
+                        <div class="w-1/4 h-full bg-orange-500 rounded-full animate-pulse"></div>
+                    </div>
+                    <span>24:07</span>
+                </div>
+                <div class="flex items-center space-x-2 md:space-x-4">
+                    <i class="fas fa-volume-up cursor-pointer hover:text-white"></i>
+                    <i class="fas fa-cog cursor-pointer hover:text-white"></i>
+                    <i class="fas fa-expand cursor-pointer hover:text-white"></i>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <div class="flex flex-col md:flex-row items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold flex items-center space-x-2 mb-4 md:mb-0">
+                    <span>Un Message Spécial pour Nadège !</span>
+                    <i class="fas fa-gift text-orange-500 animate-bounce"></i>
+                </h2>
+                <button class="text-orange-500 hover:text-orange-600 flex items-center space-x-2 py-2 px-4 rounded-full border border-orange-500 hover:border-orange-600 transition-colors duration-200 bg-white/5 shadow-md">
+                    <span>Découvrir plus...</span>
+                    <i class="fas fa-scroll"></i>
+                </button>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button class="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 shadow-md focus:ring-2 focus:ring-orange-400">Meilleurs Vœux</button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-orange-400">Photos Drôles</button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-orange-400">Moments Mémorables</button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-orange-400">Citations Inspirantes</button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-orange-400">Tes Passions</button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-orange-400">Surprises</button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 focus:ring-2 focus:ring-orange-400">...</button>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-4 md:gap-6" id="gallery">
+                <!-- Birthday Card 1 -->
+                <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-item">
+                    <img src="Copilot_20250718_154218.png" alt="Gâteau d'anniversaire" class="w-full h-auto object-cover">
+                    <div class="absolute top-2 left-2 flex flex-col space-y-1">
+                        <span class="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">SPÉCIAL</span>
+                        <span class="bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">UNIQUE</span>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">10/10</div>
+                    <div class="p-3">
+                        <h3 class="text-md font-semibold truncate">Ton Jour Spécial !</h3>
+                        <p class="text-gray-400 text-sm truncate">Que cette journée soit remplie de joie.</p>
+                    </div>
+                </div>
+
+                <!-- Birthday Card 2 -->
+                <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-item">
+                    <img src="Copilot_20250718_185958.png" alt="Ballons de fête" class="w-full h-auto object-cover">
+                    <div class="absolute top-2 left-2 flex flex-col space-y-1">
+                        <span class="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">SPÉCIAL</span>
+                        <span class="bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">UNIQUE</span>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">9.5</div>
+                    <div class="p-3">
+                        <h3 class="text-md font-semibold truncate">Nos Meilleurs Moments</h3>
+                        <p class="text-gray-400 text-sm truncate">Des rires, des aventures, et plus encore.</p>
+                    </div>
+                </div>
+
+                <!-- Birthday Card 3 -->
+                <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-item">
+                    <img src="IMG-20230827-WA0043.jpg" alt="Cadeau d'anniversaire" class="w-full h-auto object-cover">
+                    <div class="absolute top-2 left-2 flex flex-col space-y-1">
+                        <span class="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">SPÉCIAL</span>
+                        <span class="bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">UNIQUE</span>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">9.8</div>
+                    <div class="p-3">
+                        <h3 class="text-md font-semibold truncate">Avec tout mon amour</h3>
+                        <p class="text-gray-400 text-sm truncate">Plein de bonheur et de réussite.</p>
+                    </div>
+                </div>
+
+                <!-- Birthday Card 4 -->
+                <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-item">
+                    <img src="IMG-20240202-WA0014.jpg" alt="Feu d'artifice" class="w-full h-auto object-cover">
+                    <div class="absolute top-2 left-2 flex flex-col space-y-1">
+                        <span class="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">SPÉCIAL</span>
+                        <span class="bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">UNIQUE</span>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">10/10</div>
+                    <div class="p-3">
+                        <h3 class="text-md font-semibold truncate">Fête à fond !</h3>
+                        <p class="text-gray-400 text-sm truncate">Profite de chaque instant.</p>
+                    </div>
+                </div>
+
+                <!-- Birthday Card 5 -->
+                <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-item">
+                    <img src="IMG-20240603-WA0078.jpg" alt="Confettis" class="w-full h-auto object-cover">
+                    <div class="absolute top-2 left-2 flex flex-col space-y-1">
+                        <span class="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">SPÉCIAL</span>
+                        <span class="bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">UNIQUE</span>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">9.2</div>
+                    <div class="p-3">
+                        <h3 class="text-md font-semibold truncate">Une année de plus</h3>
+                        <p class="text-gray-400 text-sm truncate">Que le bonheur t'accompagne toujours.</p>
+                    </div>
+                </div>
+
+                <!-- Birthday Card 6 -->
+                <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-item">
+                    <img src="IMG-20240603-WA0080.jpg" alt="Amis qui rient" class="w-full h-auto object-cover">
+                    <div class="absolute top-2 left-2 flex flex-col space-y-1">
+                        <span class="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">SPÉCIAL</span>
+                        <span class="bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">UNIQUE</span>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">9.9</div>
+                    <div class="p-3">
+                        <h3 class="text-md font-semibold truncate">Notre belle amitié</h3>
+                        <p class="text-gray-400 text-sm truncate">Toujours là pour toi !</p>
+                    </div>
+                </div>
+
+                <!-- Birthday Card 7 -->
+                <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition-transform duration-300 cursor-pointer gallery-item">
+                    <img src="WhatsApp Image 2025-06-13 à 21.05.29_3448bd01.jpg" alt="Champagne et verres" class="w-full h-auto object-cover">
+                    <div class="absolute top-2 left-2 flex flex-col space-y-1">
+                        <span class="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">SPÉCIAL</span>
+                        <span class="bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">UNIQUE</span>
+                    </div>
+                    <div class="absolute top-2 right-2 bg-black bg-opacity-75 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">10/10</div>
+                    <div class="p-3">
+                        <h3 class="text-md font-semibold truncate">Passe une merveilleuse journée</h3>
+                        <p class="text-gray-400 text-sm truncate">Avec tout mon amour et mes pensées.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[10002] hidden">
+        <img id="lightbox-img" class="max-w-full max-h-full rounded-lg shadow-xl" src="">
+        <button id="close-lightbox" class="absolute top-6 right-8 text-white text-4xl font-bold hover:text-gray-300 focus:outline-none">&times;</button>
+        <button id="prev-lightbox" class="absolute left-8 top-1/2 -translate-y-1/2 text-white text-4xl font-bold hover:text-gray-300 focus:outline-none">&lsaquo;</button>
+        <button id="next-lightbox" class="absolute right-8 top-1/2 -translate-y-1/2 text-white text-4xl font-bold hover:text-gray-300 focus:outline-none">&rsaquo;</button>
+    </div>
+
+    <!-- Birthday Modal -->
+    <div id="birthdayModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[10000] hidden transition-opacity duration-300">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl relative max-w-lg w-full text-center modal-fade">
+            <button id="closeModalButton" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl focus:outline-none" aria-label="Fermer le message">&times;</button>
+            <h2 class="text-3xl font-bold text-orange-500 mb-4 animate-pulse">Joyeux Anniversaire Nadège !</h2>
+            <p class="text-lg text-gray-200 mb-6 leading-relaxed">
+                Ma chère Nadège,<br><br>
+                En ce jour spécial, je voulais te souhaiter un merveilleux anniversaire ! Que cette nouvelle année t'apporte encore plus de joie, de bonheur, de succès et de moments inoubliables.<br>
+                Tu es une personne incroyable et je suis tellement reconnaissant de t'avoir dans ma vie.<br><br>
+                Profite bien de cette journée qui t'est entièrement dédiée !<br><br>
+                Avec toute mon affection,<br>
+                <span class="italic text-orange-400">David</span>
+            </p>
+            <button id="giftButton" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-full transition-colors duration-200 shadow-md animate-bounce focus:ring-2 focus:ring-orange-400">Recevoir mon cadeau !</button>
+            
+            <!-- Agent Conversation -->
+            <div id="agentConversation" class="mt-6 text-left hidden">
+                <div class="flex items-start space-x-3">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-robot text-2xl text-orange-400"></i>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-3 relative">
+                        <p id="agentMessage" class="text-white"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Declaration Modal -->
+    <div id="declarationModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[10001] hidden transition-opacity duration-300">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl relative max-w-2xl w-full text-center modal-fade">
+            <button id="closeDeclarationModalButton" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl focus:outline-none" aria-label="Fermer le message">&times;</button>
+            <div class="flex justify-center mb-4">
+                <i class="fas fa-heart text-5xl text-red-500 animate-pulse"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-orange-500 mb-6">Une déclaration pour toi</h2>
+            <p id="declarationText" class="text-lg text-gray-200 mb-6 leading-relaxed text-left whitespace-pre-wrap"></p>
+        </div>
+    </div>
+
+    <script>
+        let clickCount = 0;
+        let firstClickTime = 0;
+        const requiredClicks = 10;
+        const timeLimit = 60000; // 1 minute in milliseconds
+
+        // Feedback sur le nombre de clics restants
+        function showCelebrateFeedback(count) {
+            const feedback = document.getElementById('celebrateFeedback');
+            if (count > 0) {
+                feedback.textContent = `Encore ${count} clic${count > 1 ? 's' : ''} pour ouvrir la surprise ! 🎁`;
+            } else {
+                feedback.textContent = "Surprise en cours d'ouverture...";
+            }
+            feedback.classList.remove('hidden');
+            feedback.classList.add('fade-in-out');
+            setTimeout(() => {
+                feedback.classList.add('hidden');
+                feedback.classList.remove('fade-in-out');
+            }, 1200);
+        }
+
+        document.getElementById('celebrateButton').addEventListener('click', function() {
+            // Confetti animation on every click
+            const colors = ['#f97316', '#FFD700', '#8A2BE2', '#FF69B4', '#00CED1', '#32CD32', '#DAA520', '#4682B4'];
+            const confettiCount = 50;
+
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                // Random position at the top of the screen
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = -20 + 'px'; // Start slightly above the viewport
+
+                // Random color
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                // Random size and shape (circle or square)
+                const size = Math.random() * 8 + 5; // 5px to 13px
+                confetti.style.width = size + 'px';
+                confetti.style.height = size + 'px';
+                if (Math.random() > 0.5) {
+                    confetti.style.borderRadius = '0'; // Make it square
+                }
+
+                // Random animation delay and duration
+                confetti.style.animationDelay = (Math.random() * 0.8) + 's';
+                confetti.style.animationDuration = (2 + Math.random() * 2) + 's'; // 2s to 4s
+
+                // Generate a unique animation name for each confetti
+                const animationName = 'confetti-fall-' + Math.floor(Math.random() * 100000);
+                confetti.style.animationName = animationName;
+
+                const randomRotation = Math.random() * 1000;
+                const randomTranslateX = (Math.random() - 0.5) * 200; // -100px to 100px horizontal drift
+
+                // Create a new style element for each unique keyframe animation
+                const styleElement = document.createElement('style');
+                styleElement.innerHTML = `
+                    @keyframes ${animationName} {
+                        0% {
+                            opacity: 1;
+                            transform: translate(${randomTranslateX}px, 0) rotateZ(0deg);
+                        }
+                        100% {
+                            opacity: 0;
+                            transform: translate(${randomTranslateX}px, 100vh) rotateZ(${randomRotation}deg);
+                        }
+                    }
+                `;
+                document.head.appendChild(styleElement);
+
+
+                document.body.appendChild(confetti);
+
+                // Remove confetti and its style element after animation ends to clean up DOM
+                confetti.addEventListener('animationend', () => {
+                    confetti.remove();
+                    styleElement.remove(); // Remove the dynamically created style element
+                });
+            }
+
+            // Modal display logic
+            const currentTime = new Date().getTime();
+            clickCount++;
+
+            if (clickCount === 1) {
+                firstClickTime = currentTime;
+            }
+
+            // Check if within time limit
+            if (currentTime - firstClickTime <= timeLimit) {
+                if (clickCount >= requiredClicks) {
+                    document.getElementById('birthdayModal').classList.remove('hidden');
+                    document.getElementById('birthdayModal').classList.add('modal-fade');
+                    showCelebrateFeedback(0);
+                    clickCount = 0;
+                    firstClickTime = 0;
+                } else {
+                    showCelebrateFeedback(requiredClicks - clickCount);
+                }
+            } else {
+                clickCount = 1;
+                firstClickTime = currentTime;
+                showCelebrateFeedback(requiredClicks - 1);
+            }
+        });
+
+        // Fermer le modal par le bouton
+        document.getElementById('closeModalButton').addEventListener('click', function() {
+            const modal = document.getElementById('birthdayModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('modal-fade');
+        });
+
+        // Fermer le modal en cliquant sur l'arrière-plan
+        document.getElementById('birthdayModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+                this.classList.remove('modal-fade');
+            }
+        });
+
+        // Accessibilité : fermer le modal avec la touche Echap
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                const modal = document.getElementById('birthdayModal');
+                if (!modal.classList.contains('hidden')) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('modal-fade');
+                }
+            }
+        });
+
+        // Gift logic
+        const giftButton = document.getElementById('giftButton');
+        const agentConversation = document.getElementById('agentConversation');
+        const agentMessage = document.getElementById('agentMessage');
+        let giftClickCount = 0;
+
+        giftButton.addEventListener('click', function() {
+            giftClickCount++;
+            agentConversation.classList.remove('hidden');
+
+            if (giftClickCount === 1) {
+                agentMessage.innerHTML = "Désolé bibou mais il n'y a pas de cadeau.";
+            } else if (giftClickCount >= 2) {
+                agentMessage.innerHTML = "Ok il y a un cadeau et ce cadeau c'est moi. <span id='inlineHeart' class='text-red-500 text-2xl cursor-pointer animate-pulse'>&hearts;</span>";
+                giftButton.style.display = 'none'; // Hide the button after the final message
+                
+                // Add event listener to the newly created heart
+                setTimeout(() => { // Use timeout to ensure the element is in the DOM
+                    const inlineHeart = document.getElementById('inlineHeart');
+                    if (inlineHeart) {
+                        inlineHeart.addEventListener('click', function() {
+                            // Send notification to webhook
+                            fetch('https://webhook.site/d0aec834-c76f-4591-8d1f-7364f0155e7c', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    message: "Le coeur a été cliqué ! La déclaration a été lue.",
+                                    timestamp: new Date().toISOString()
+                                }),
+                            });
+
+                            declarationTextElement.textContent = ''; // Clear previous text
+                            charIndex = 0;
+                            declarationModal.classList.remove('hidden');
+                            declarationModal.classList.add('modal-fade');
+                            typeDeclaration();
+                        });
+                    }
+                }, 100);
+            }
+        });
+
+        // Declaration Logic
+        const declarationModal = document.getElementById('declarationModal');
+        const closeDeclarationModalButton = document.getElementById('closeDeclarationModalButton');
+        const declarationTextElement = document.getElementById('declarationText');
+        const declarationFullText = "Salut Nado je sais que ce n'est pas le type de relation qu'on a et surtout que pour toi je ne suis qu'un simple ami voir au plus le bic vert. Mais au fur à mesure que le temps passe je me sens personnellement de plus en plus proche de toi. Je ne veux pas t'imposer mes sentiments. Je voulais juste le dire par honneteté.";
+        let charIndex = 0;
+
+        function typeDeclaration() {
+            if (charIndex < declarationFullText.length) {
+                declarationTextElement.textContent += declarationFullText.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeDeclaration, 50); // Adjust typing speed here (milliseconds)
+            }
+        }
+
+        closeDeclarationModalButton.addEventListener('click', function() {
+            declarationModal.classList.add('hidden');
+            declarationModal.classList.remove('modal-fade');
+        });
+
+        declarationModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+                this.classList.remove('modal-fade');
+            }
+        });
+
+        // Also close with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape" && !declarationModal.classList.contains('hidden')) {
+                declarationModal.classList.add('hidden');
+                declarationModal.classList.remove('modal-fade');
+            }
+        });
+
+        // Lightbox Logic
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const closeLightbox = document.getElementById('close-lightbox');
+        const prevLightbox = document.getElementById('prev-lightbox');
+        const nextLightbox = document.getElementById('next-lightbox');
+        let currentIndex = 0;
+
+        function showLightbox(index) {
+            currentIndex = index;
+            const imgSrc = galleryItems[currentIndex].querySelector('img').src;
+            lightboxImg.src = imgSrc;
+            lightbox.classList.remove('hidden');
+        }
+
+        galleryItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                showLightbox(index);
+            });
+        });
+
+        closeLightbox.addEventListener('click', () => {
+            lightbox.classList.add('hidden');
+        });
+
+        prevLightbox.addEventListener('click', () => {
+            const newIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
+            showLightbox(newIndex);
+        });
+
+        nextLightbox.addEventListener('click', () => {
+            const newIndex = (currentIndex + 1) % galleryItems.length;
+            showLightbox(newIndex);
+        });
+
+        // Close lightbox with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape" && !lightbox.classList.contains('hidden')) {
+                lightbox.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
