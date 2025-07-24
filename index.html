@@ -559,6 +559,105 @@
             }
         });
     </script>
+
+    <!-- Bouton "Click me" flottant -->
+    <button id="trickyButton"
+        class="fixed bottom-10 right-10 bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-full shadow-lg z-[10003] transition-all duration-200 cursor-pointer"
+        style="transition: top 0.3s, left 0.3s, right 0.3s, bottom 0.3s;">
+        Click me
+    </button>
+
+    <!-- Modal verset -->
+    <div id="verseModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[10004] hidden">
+        <div class="bg-white p-8 rounded-lg shadow-2xl max-w-lg w-full text-center relative">
+            <button id="closeVerseModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl focus:outline-none" aria-label="Fermer">&times;</button>
+            <h2 class="text-2xl font-bold text-pink-600 mb-4">Verset pour toi</h2>
+            <p class="text-gray-800 text-lg leading-relaxed">
+                "Lève-toi, sois éclairée, car ta lumière arrive, Et la gloire de l'Eternel se lève sur toi.<br>
+                2Voici, les ténèbres couvrent la terre, Et l'obscurité les peuples; Mais sur toi l'Eternel se lève, Sur toi sa gloire apparaît."
+            </p>
+            <span class="block mt-4 text-gray-500 text-sm">Esaïe 60:1-2</span>
+        </div>
+    </div>
+
+    <script>
+        // --- Bouton "Click me" qui se déplace ---
+        const trickyButton = document.getElementById('trickyButton');
+        const verseModal = document.getElementById('verseModal');
+        const closeVerseModal = document.getElementById('closeVerseModal');
+
+        let trickyClickCount = 0;
+        let trickyFrozen = false;
+        let trickyFreezeTimeout = null;
+
+        function moveButtonRandomly() {
+            if (trickyFrozen) return;
+            const padding = 20;
+            const btnWidth = trickyButton.offsetWidth;
+            const btnHeight = trickyButton.offsetHeight;
+            const winWidth = window.innerWidth;
+            const winHeight = window.innerHeight;
+
+            const maxLeft = winWidth - btnWidth - padding;
+            const maxTop = winHeight - btnHeight - padding;
+
+            const left = Math.random() * maxLeft;
+            const top = Math.random() * maxTop;
+
+            trickyButton.style.left = left + 'px';
+            trickyButton.style.top = top + 'px';
+            trickyButton.style.right = 'auto';
+            trickyButton.style.bottom = 'auto';
+        }
+
+        function freezeTrickyButton() {
+            trickyFrozen = true;
+            if (trickyFreezeTimeout) clearTimeout(trickyFreezeTimeout);
+            trickyFreezeTimeout = setTimeout(() => {
+                trickyFrozen = false;
+            }, 3000); // 30 secondes
+        }
+
+        trickyButton.addEventListener('mouseenter', function() {
+            if (!trickyFrozen) moveButtonRandomly();
+        });
+        trickyButton.addEventListener('touchstart', function() {
+            if (!trickyFrozen) moveButtonRandomly();
+        });
+
+        trickyButton.addEventListener('click', function(e) {
+            verseModal.classList.remove('hidden');
+            // Change le bouton après le premier clic
+            trickyButton.textContent = "J'ai un secret pour toi";
+            trickyButton.classList.remove('bg-pink-600', 'hover:bg-pink-700');
+            trickyButton.classList.add('bg-purple-700', 'hover:bg-purple-800');
+            trickyButton.disabled = true;
+            setTimeout(() => {
+                trickyButton.disabled = false;
+                trickyButton.title = "Il y a un message caché sur ce site arrivera tu à le trouver?";
+            }, 3000);
+
+            trickyClickCount++;
+            if (trickyClickCount >= 5 && !trickyFrozen) { // 5 tentatives avant de geler
+                freezeTrickyButton();
+            }
+        });
+
+        closeVerseModal.addEventListener('click', function() {
+            verseModal.classList.add('hidden');
+        });
+
+        verseModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                verseModal.classList.add('hidden');
+            }
+        });
+
+        // Optionnel : repositionner le bouton si la fenêtre est redimensionnée
+        window.addEventListener('resize', moveButtonRandomly);
+
+        // Initial position
+        setTimeout(moveButtonRandomly, 500);
+    </script>
 </body>
-</html>
 </html>
